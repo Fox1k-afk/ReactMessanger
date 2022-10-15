@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import {
-	followAC,
-	setCurrentPageAC,
-	setUsersAC,
-	toggleIsFetchingAC,
-	unfollowAC,
+	follow,
+	setCurrentPage,
+	setUsers,
+	toggleIsFetching,
+	unfollow,
 } from '../../redux/usersReducer';
 import Users from './Users';
 import axios from 'axios';
@@ -16,11 +16,11 @@ class UsersContainer extends React.Component {
 		this.props.toggleIsFetching(true);
 		axios
 			.get(
-				`https://6347f870db76843976b71a55.mockapi.io/api/users?page=${this.props.currentPage}&limit=${this.props.pageSize}`
+				`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`
 			)
 			.then((res) => {
 				this.props.toggleIsFetching(false);
-				this.props.setUsers(res.data);
+				this.props.setUsers(res.data.items);
 			});
 	}
 
@@ -29,11 +29,11 @@ class UsersContainer extends React.Component {
 		this.props.toggleIsFetching(true);
 		axios
 			.get(
-				`https://6347f870db76843976b71a55.mockapi.io/api/users?page=${pageNumber}&limit=${this.props.pageSize}`
+				`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`
 			)
 			.then((res) => {
 				this.props.toggleIsFetching(false);
-				this.props.setUsers(res.data);
+				this.props.setUsers(res.data.items);
 			});
 	};
 
@@ -65,24 +65,10 @@ const mapStateToProps = (state) => {
 	};
 };
 
-const mapDispatchToProps = (dispatch) => {
-	return {
-		follow: (userId) => {
-			dispatch(followAC(userId));
-		},
-		unfollow: (userId) => {
-			dispatch(unfollowAC(userId));
-		},
-		setUsers: (users) => {
-			dispatch(setUsersAC(users));
-		},
-		setCurrentPage: (pageNumber) => {
-			dispatch(setCurrentPageAC(pageNumber));
-		},
-		toggleIsFetching: (isFetching) => {
-			dispatch(toggleIsFetchingAC(isFetching));
-		},
-	};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer);
+export default connect(mapStateToProps, {
+	follow,
+	unfollow,
+	setUsers,
+	setCurrentPage,
+	toggleIsFetching,
+})(UsersContainer);
