@@ -5,38 +5,31 @@ import {
 	setUsers,
 	toggleIsFetching,
 	unfollow,
+	toggleFollowingProgress,
 } from '../../redux/usersReducer';
 import Users from './Users';
-import axios from 'axios';
 import React from 'react';
 import Preloader from '../common/Preloader/Preloader';
+import { usersAPI } from '../../api/api';
 
 class UsersContainer extends React.Component {
 	componentDidMount() {
 		this.props.toggleIsFetching(true);
-		axios
-			.get(
-				`https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`,
-				{ withCredentials: true }
-			)
-			.then((res) => {
+		usersAPI
+			.getUsers(this.props.currentPage, this.props.pageSize)
+			.then((data) => {
 				this.props.toggleIsFetching(false);
-				this.props.setUsers(res.data.items);
+				this.props.setUsers(data.items);
 			});
 	}
 
 	onPageChanged = (pageNumber) => {
 		this.props.setCurrentPage(pageNumber);
 		this.props.toggleIsFetching(true);
-		axios
-			.get(
-				`https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`,
-				{ withCredentials: true }
-			)
-			.then((res) => {
-				this.props.toggleIsFetching(false);
-				this.props.setUsers(res.data.items);
-			});
+		usersAPI.getUsers(this.props.pageNumber, this.props.pageSize).then((data) => {
+			this.props.toggleIsFetching(false);
+			this.props.setUsers(data.items);
+		});
 	};
 
 	render() {
@@ -51,6 +44,8 @@ class UsersContainer extends React.Component {
 					users={this.props.users}
 					follow={this.props.follow}
 					unfollow={this.props.unfollow}
+					toggleFollowingProgress={this.props.toggleFollowingProgress}
+					followingInProgress={this.props.followingInProgress}
 				/>
 			</>
 		);
@@ -64,6 +59,7 @@ const mapStateToProps = (state) => {
 		totalUsersCount: state.usersPage.totalUsersCount,
 		currentPage: state.usersPage.currentPage,
 		isFetching: state.usersPage.isFetching,
+		followingInProgress: state.usersPage.followingInProgress,
 	};
 };
 
@@ -73,4 +69,5 @@ export default connect(mapStateToProps, {
 	setUsers,
 	setCurrentPage,
 	toggleIsFetching,
+	toggleFollowingProgress,
 })(UsersContainer);
