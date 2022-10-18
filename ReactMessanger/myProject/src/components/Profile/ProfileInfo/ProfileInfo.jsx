@@ -2,6 +2,7 @@ import React from 'react';
 import Preloader from '../../common/Preloader/Preloader';
 import styles from './ProfileInfo.module.css';
 import userPhoto from '../../../assets/images/User-Avatar.png';
+import ProfileStatus from './ProfileStatus';
 
 const ProfileInfo = (props) => {
 	if (!props.profile) {
@@ -10,7 +11,7 @@ const ProfileInfo = (props) => {
 
 	return (
 		<div>
-			<img src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&w=1080&fit=max&q=80&fm=jpg&crop=entropy&cs=tinysrgb' />
+			{/* <img src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&w=1080&fit=max&q=80&fm=jpg&crop=entropy&cs=tinysrgb' /> */}
 
 			<div className={styles.descriptionBlock}>
 				<div>
@@ -23,6 +24,7 @@ const ProfileInfo = (props) => {
 						}
 					/>
 				</div>
+				<ProfileStatus status={props.status} updateStatus={props.updateStatus} />
 				<div>Name: {props.profile.fullName}</div>
 				<div>About me: {props.profile.aboutMe}</div>
 				<div>facebook: {props.profile.contacts.facebook}</div>
