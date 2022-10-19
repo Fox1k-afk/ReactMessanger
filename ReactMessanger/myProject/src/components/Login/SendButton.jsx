@@ -1,15 +1,15 @@
 import React from 'react';
 import { useFormikContext } from 'formik';
 
-const SaveButton = () => {
+const SendButton = () => {
 	const { isValid } = useFormikContext();
 	return (
 		<div>
 			<button type='submit' disabled={!isValid}>
-				Save
+				Send
 			</button>
 		</div>
 	);
 };
 
-export default SaveButton;
+export default SendButton;

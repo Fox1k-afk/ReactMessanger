@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import s from './Dialogs.module.css';
 import Message from './Message/Message';
 import DialogItem from './DialogItem/DialogItem';
 import { Navigate } from 'react-router-dom';
+import { Form, Formik, Field } from 'formik';
+import SendButton from '../Login/SendButton';
 
 const Dialogs = (props) => {
 	let state = props.dialogsPage;
@@ -15,17 +17,6 @@ const Dialogs = (props) => {
 		<Message message={m.message} key={m.id} />
 	));
 
-	let newMessageBody = state.newMessageBody;
-
-	const onSendMessageClick = () => {
-		props.sendMessage();
-	};
-
-	const onNewMessageChange = (e) => {
-		let body = e.target.value;
-		props.updateNewMessageBody(body);
-	};
-
 	if (!props.isAuth) return <Navigate to='/login' />;
 
 	return (
@@ -34,22 +25,40 @@ const Dialogs = (props) => {
 
 			<div className={s.messages}>
 				<div>{messagesElements}</div>
-				<div>
-					<div>
-						<textarea
-							value={newMessageBody}
-							onChange={onNewMessageChange}
-							placeholder='Enter ur message'
-						>
-							E
-						</textarea>
-					</div>
-					<div>
-						<button onClick={onSendMessageClick}>Send</button>{' '}
-					</div>
-				</div>
+				<NewMessageForm sendNewMessage={props.sendMessage} />
 			</div>
 		</div>
+	);
+};
+
+const NewMessageForm = (props) => {
+	const [textValue] = useState({ msgText: '' });
+
+	function addNewMsg(values) {
+		props.sendNewMessage(values);
+	}
+	return (
+		<Formik
+			initialValues={textValue}
+			onSubmit={(values) => {
+				addNewMsg(values.msgText);
+				values.msgText = '';
+			}}
+		>
+			<Form>
+				<div>
+					<Field
+						type='textarea'
+						name='msgText'
+						component='textarea'
+						placeholder='Enter ur msg'
+					/>
+				</div>
+				<div>
+					<SendButton />
+				</div>
+			</Form>
+		</Formik>
 	);
 };
 

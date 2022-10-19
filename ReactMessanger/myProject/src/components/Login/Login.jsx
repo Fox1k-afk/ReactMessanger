@@ -1,8 +1,8 @@
 import React from 'react';
-import { Form, Formik, Field, ErrorMessage } from 'formik';
+import { Form, Formik, Field, ErrorMessage, getIn } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
-import SaveButton from './SaveButton';
+import SaveButton from './SendButton';
 
 const INITIAL_INPUT_VALUE = {
 	email: '',
@@ -25,6 +25,27 @@ const Login = (props) => {
 		console.log(values);
 	}
 
+	function getStyles(errors, fieldName) {
+		if (getIn(errors, fieldName)) {
+			return {
+				border: '1px solid red',
+			};
+		}
+	}
+
+	function CustomInput({ field, form: { errors } }) {
+		return (
+			<div>
+				<input {...field} style={getStyles(errors, field.name)} />
+				<ErrorMessage
+					name={field.name}
+					component='div'
+					style={{ color: 'crimson' }}
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<h1>Login</h1>
@@ -35,20 +56,20 @@ const Login = (props) => {
 			>
 				<Form>
 					<div>
-						<Field type='email' name='email' placeholder='Enter your email' />
-						<ErrorMessage name='email' component='div' style={{ color: 'crimson' }} />
+						<Field
+							type='email'
+							name='email'
+							component={CustomInput}
+							placeholder='Enter your email'
+						/>
 					</div>
 
 					<div>
 						<Field
 							type='password'
 							name='password'
+							component={CustomInput}
 							placeholder='Enter your password '
-						/>
-						<ErrorMessage
-							name='password'
-							component='div'
-							style={{ color: 'crimson' }}
 						/>
 					</div>
 
