@@ -3,6 +3,9 @@ import { Form, Formik, Field, ErrorMessage, getIn } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import SaveButton from './SendButton';
+import { login } from '../../redux/authReducer';
+import { connect } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 const INITIAL_INPUT_VALUE = {
 	email: '',
@@ -20,9 +23,7 @@ const Login = (props) => {
 	const [inpVal] = useState(INITIAL_INPUT_VALUE);
 
 	function onSubmit(values) {
-		console.log(JSON.stringify(values, null, 2));
-
-		console.log(values);
+		props.login(values.email, values.password, values.rememberMe);
 	}
 
 	function getStyles(errors, fieldName) {
@@ -33,10 +34,10 @@ const Login = (props) => {
 		}
 	}
 
-	function CustomInput({ field, form: { errors } }) {
+	function EmailInput({ field, form: { errors } }) {
 		return (
 			<div>
-				<input {...field} style={getStyles(errors, field.name)} />
+				<input {...field} type='email' style={getStyles(errors, field.name)} />
 				<ErrorMessage
 					name={field.name}
 					component='div'
@@ -44,6 +45,22 @@ const Login = (props) => {
 				/>
 			</div>
 		);
+	}
+	function PasswordInput({ field, form: { errors } }) {
+		return (
+			<div>
+				<input {...field} type='password' style={getStyles(errors, field.name)} />
+				<ErrorMessage
+					name={field.name}
+					component='div'
+					style={{ color: 'crimson' }}
+				/>
+			</div>
+		);
+	}
+
+	if (props.isAuth) {
+		return <Navigate to={'/profile'} />;
 	}
 
 	return (
@@ -56,21 +73,13 @@ const Login = (props) => {
 			>
 				<Form>
 					<div>
-						<Field
-							type='email'
-							name='email'
-							component={CustomInput}
-							placeholder='Enter your email'
-						/>
+						Email
+						<Field name='email' component={EmailInput} />
 					</div>
 
 					<div>
-						<Field
-							type='password'
-							name='password'
-							component={CustomInput}
-							placeholder='Enter your password '
-						/>
+						Password
+						<Field name='password' component={PasswordInput} />
 					</div>
 
 					<div>
@@ -87,4 +96,7 @@ const Login = (props) => {
 	);
 };
 
-export default Login;
+const mapStateToProps = (state) => ({
+	isAuth: state.auth.isAuth,
+});
+export default connect(mapStateToProps, { login })(Login);

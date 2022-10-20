@@ -22,6 +22,7 @@ const ProfileInfo = (props) => {
 								? props.profile.photos.large
 								: userPhoto
 						}
+						alt='user avatar'
 					/>
 				</div>
 				<ProfileStatus status={props.status} updateStatus={props.updateStatus} />
