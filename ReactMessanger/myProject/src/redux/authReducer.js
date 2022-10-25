@@ -16,7 +16,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
 				...state,
 				...action.payload,
 			};
-
 		default:
 			return state;
 	}
@@ -38,11 +37,14 @@ export const getAuthUserData = () => {
 	};
 };
 
-export const login = (email, password, rememberMe) => {
+export const login = (email, password, rememberMe = false) => {
 	return (dispatch) => {
 		authAPI.login(email, password, rememberMe).then((data) => {
 			if (data.resultCode === 0) {
 				dispatch(getAuthUserData());
+			} else {
+				alert('Incorrect Email or Password');
+				//fix this
 			}
 		});
 	};

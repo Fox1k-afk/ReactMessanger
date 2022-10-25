@@ -22,10 +22,6 @@ const FORM_VALIDATION_SCHEMA = {
 const Login = (props) => {
 	const [inpVal] = useState(INITIAL_INPUT_VALUE);
 
-	function onSubmit(values) {
-		props.login(values.email, values.password, values.rememberMe);
-	}
-
 	function getStyles(errors, fieldName) {
 		if (getIn(errors, fieldName)) {
 			return {
@@ -63,6 +59,10 @@ const Login = (props) => {
 		return <Navigate to={'/profile'} />;
 	}
 
+	const onSubmit = (values) => {
+		props.login(values.email, values.password, values.rememberMe);
+	};
+
 	return (
 		<>
 			<h1>Login</h1>
@@ -88,7 +88,6 @@ const Login = (props) => {
 							remember me
 						</label>
 					</div>
-
 					<SaveButton />
 				</Form>
 			</Formik>
