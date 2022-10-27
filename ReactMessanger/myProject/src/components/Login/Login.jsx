@@ -19,7 +19,7 @@ const FORM_VALIDATION_SCHEMA = {
 		.required('Password required'),
 };
 
-const Login = (props) => {
+const Login = ({ isAuth, login }) => {
 	const [inpVal] = useState(INITIAL_INPUT_VALUE);
 
 	function getStyles(errors, fieldName) {
@@ -55,12 +55,12 @@ const Login = (props) => {
 		);
 	}
 
-	if (props.isAuth) {
+	if (isAuth) {
 		return <Navigate to={'/profile'} />;
 	}
 
 	const onSubmit = (values) => {
-		props.login(values.email, values.password, values.rememberMe);
+		login(values.email, values.password, values.rememberMe);
 	};
 
 	return (

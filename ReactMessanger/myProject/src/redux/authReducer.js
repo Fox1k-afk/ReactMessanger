@@ -1,6 +1,6 @@
 import { authAPI } from '../api/api';
 
-const SET_USER_DATA = 'SET_USER_DATA';
+const SET_USER_DATA = 'auth/SET_USER_DATA';
 
 const INITIAL_STATE = {
 	userId: null,
@@ -26,38 +26,34 @@ export const setAuthUserData = (userId, email, login, isAuth) => ({
 	payload: { userId, email, login, isAuth },
 });
 
-export const getAuthUserData = () => {
-	return (dispatch) => {
-		authAPI.me().then((data) => {
-			if (data.resultCode === 0) {
-				let { id, email, login } = data.data;
-				dispatch(setAuthUserData(id, email, login, true));
-			}
-		});
-	};
+export const getAuthUserData = () => async (dispatch) => {
+	const data = await authAPI.me();
+
+	if (data.resultCode === 0) {
+		let { id, email, login } = data.data;
+		dispatch(setAuthUserData(id, email, login, true));
+	}
 };
 
-export const login = (email, password, rememberMe = false) => {
-	return (dispatch) => {
-		authAPI.login(email, password, rememberMe).then((data) => {
-			if (data.resultCode === 0) {
-				dispatch(getAuthUserData());
-			} else {
-				alert('Incorrect Email or Password');
-				//fix this
-			}
-		});
-	};
-};
+export const login =
+	(email, password, rememberMe = false) =>
+	async (dispatch) => {
+		const data = await authAPI.login(email, password, rememberMe);
 
-export const logout = () => {
-	return (dispatch) => {
-		authAPI.logout().then((data) => {
-			if (data.resultCode === 0) {
-				dispatch(setAuthUserData(null, null, null, false));
-			}
-		});
+		if (data.resultCode === 0) {
+			dispatch(getAuthUserData());
+		} else {
+			alert('Incorrect Email or Password');
+			//fix this
+		}
 	};
+
+export const logout = () => async (dispatch) => {
+	const data = await authAPI.logout();
+
+	if (data.resultCode === 0) {
+		dispatch(setAuthUserData(null, null, null, false));
+	}
 };
 
 export default authReducer;
